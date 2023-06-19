@@ -1,27 +1,55 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+.grid {
+  display: grid;
+  grid-template-columns: auto auto auto auto auto; /* adjust this based on your needs */
+  gap: 20px; /* Increased gap */
+  margin: 20px; /* Existing margin */
+  padding: 20px; /* Added padding */
+  background-color: #f5f5f5; /* Added a light background */
+  border-radius: 15px; /* Added border radius */
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+.grid__row {
+  display: contents;
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+.grid__cell {
+  border: 1px solid #ccc;
+  padding: 15px; /* Increased padding */
+  background-color: #fff; /* Added a white background */
+  border-radius: 5px; /* Added border radius */
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1); /* Added a box shadow */
+  overflow: auto; /* Added for scrolling if the content is larger than the cell */
+}
+
+
+.header {
+  width: 100%;
+  background-color: #4180C1;
+  padding: 20px 0;
+  text-align: center;
+  margin-bottom: 20px;
+  text-shadow: rgba(0, 0, 0, 0.4) 0px 4px 5px;
+  border-bottom: 5px solid #1E5A84; /* Added a border-bottom for a bit of depth */
+}
+
+.header h1 {
+  font-size: 2.5em;
+  color: whitesmoke !important;
+}
+
+.card {
+  width: 100%; /* Ensure the card takes full width of the cell */
+}
+
+.card__text {
+  list-style-type: none;
+  margin-bottom: 15px; /* Add some margin to the bottom of each list item */
+}
+
+
+.card__content ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0; /* Keep removing default margins */
 }
