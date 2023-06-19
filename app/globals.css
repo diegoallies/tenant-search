@@ -53,3 +53,25 @@
   padding: 0;
   margin: 0; /* Keep removing default margins */
 }
+
+
+.grid__row:first-child .grid__cell {
+  background-color:whitesmoke; /* background color similar to header */
+  color: #4180C1; /* white text */
+  font-size: 1.2em; /* bigger font size */
+  font-weight: bold; /* bold text */
+  text-align: center; /* center text alignment */
+  padding: 20px; /* increased padding */
+  border-radius: 5px; /* maintain border radius */
+}
+
+
+.grid__row .grid__cell:first-child {
+  background-color: whitesmoke; /* background color similar to header */
+  color: #4180C1; /* white text */
+  font-size: 1.2em; /* bigger font size */
+  font-weight: bold; /* bold text */
+  text-align: center; /* center text alignment */
+  padding: 20px; /* increased padding */
+  border-radius: 5px; /* maintain border radius */
+}
