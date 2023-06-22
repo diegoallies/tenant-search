@@ -116,15 +116,11 @@ const App: React.FC = () => {
   };
 
   return (
-    <Grid container className="gridContainer">
-      <Grid container className="fixed">
-        <Grid item xs={12} className="header">
-          <div className="headerName">{getTenantName(currentTenantData)}</div>
-          <div className="headerID">
-            Tenant ID: {tenantIds[currentTenantIndex]}
-          </div>
-        </Grid>
-        <Grid item xs={12}>
+    <div className="layout">
+      <div className="header">
+        <div className="headerName">{getTenantName(currentTenantData)}</div>
+        <div className="headerID">Tenant ID: {tenantIds[currentTenantIndex]}</div>
+        <div>
           <Button
             variant="contained"
             color="primary"
@@ -141,37 +137,41 @@ const App: React.FC = () => {
           >
             Next
           </Button>
-        </Grid>
-      </Grid>
-      <div className="spacetaker"></div>
-      <Grid container item>
-        <Grid item xs={1} className="stickyCell" /> {/* Change here */}
-        {orderedSources.map((source, index) => (
-          <Grid item xs={2} className="stickyCell" key={index}>
-            {source}
-          </Grid>
-        ))}
-      </Grid>
-      {orderedSections.map((section, sectionIndex) => (
-        <Grid container item key={sectionIndex}>
-          <Grid item xs={1} className="stickyCell">
-            {section}
-          </Grid>
-          {orderedSources.map((source, sourceIndex) => (
-            <Grid item xs={2} className="gridCell" key={sourceIndex}>
-              <Checkbox
-                checked={checked[`${section}-${source}`]}
-                onChange={(event) =>
-                  handleCheckboxChange(event, section, source)
-                }
-              />
-              {currentTenantData[section][source]}
-            </Grid>
+        </div>
+      </div>
+      <div className="content">
+        <div className="table">
+          <div className="table-row header-row">
+            <div className="table-cell"></div>
+            {orderedSources.map((source, index) => (
+              <div className="table-cell" key={index}>
+                {source}
+              </div>
+            ))}
+          </div>
+          {orderedSections.map((section, sectionIndex) => (
+            <div className="table-row" key={sectionIndex}>
+              <div className="table-cell stickyCell">
+                {section}
+              </div>
+              {orderedSources.map((source, sourceIndex) => (
+                <div className="table-cell" key={sourceIndex}>
+                  <Checkbox
+                    checked={checked[`${section}-${source}`]}
+                    onChange={(event) =>
+                      handleCheckboxChange(event, section, source)
+                    }
+                  />
+                  {currentTenantData[section][source]}
+                </div>
+              ))}
+            </div>
           ))}
-        </Grid>
-      ))}
-    </Grid>
+        </div>
+      </div>
+    </div>
   );
+  
 };
 
 export default App;
