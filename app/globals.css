@@ -18,6 +18,11 @@
   z-index: 10;
 }
 
+.headerID {
+  font-size: 0.3em;
+  margin-bottom: 8px;
+}
+
 .content {
   position: relative;
   overflow: auto;
