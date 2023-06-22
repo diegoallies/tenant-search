@@ -25,9 +25,10 @@
 
 .content {
   position: relative;
-  overflow: auto;
-  height: calc(100vh - /* Add the height of your header */);
-  width: 100%;
+  overflow: auto;  
+  height: calc(100vh - 25vh);
+  width: 97.5%;
+  padding: 15px; 
 }
 
 .table {
@@ -74,4 +75,6 @@
 
 .header-row  {
   position: sticky;
+  top: 0;  
+  z-index: 1;
 }
