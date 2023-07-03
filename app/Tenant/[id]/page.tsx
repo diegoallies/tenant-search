@@ -104,6 +104,12 @@ const paramId = params.id
     }
 };
 
+
+
+const handleHome = () => {
+      router.push(`/Tenant/`);
+  }
+
   const getTenantName = (tenantData: any): string => {
     if (!tenantData) {
       console.error("Invalid tenant data!");
@@ -148,29 +154,37 @@ const paramId = params.id
 
   return (
     <div className="layout">
-      <div className="header">
-        <div className="headerName">{getTenantName(currentTenantData)}</div>
-        <div className="headerID">Tenant ID: {tenantIds[currentTenantIndex]}</div>
-        {/* <div>{params.id}</div> */}
-        <div>
-          <Button
-            variant="contained"
-            color="primary"
-            disabled={params.id == 0}
-            onClick={handlePrev}
-          >
-            Prev
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            disabled={params.id == - 1}
-            onClick={handleNext}
-          >
-            Next
-          </Button>
-        </div>
-      </div>
+     
+     <div className="header">
+  <div className="headerName">{getTenantName(currentTenantData)}</div>
+  <div className="headerID">Tenant ID: {tenantIds[currentTenantIndex]}</div>
+  <div className="headerButtons">
+    <Button
+      variant="contained"
+      color="primary"
+      disabled={paramId == 0}
+      onClick={handlePrev}
+    >
+      Prev
+    </Button>
+    <Button
+      variant="contained"
+      color="primary"
+      onClick={handleHome}
+    >
+      Home
+    </Button>
+    <Button
+      variant="contained"
+      color="primary"
+      disabled={paramId == tenantIds.length - 1}
+      onClick={handleNext}
+    >
+      Next
+    </Button>
+  </div>
+</div>
+
 
       
       <div className="content">
