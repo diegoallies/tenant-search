@@ -1,11 +1,10 @@
-
 "use client";
 
 import React, { useState, useEffect } from "react";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
-import { useRouter, usePathname, useSearchParams } from 'next/navigation'
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 
 import "./styles.css";
 
@@ -24,24 +23,18 @@ interface CardProps {
   sections: Section[];
 }
 
+export default function aboutparams({ params }: any) {
+  const router = useRouter();
 
-export default function aboutparams ({ params } : any) {
+  // return (
+  //     <div>
+  //         <h1>
+  //             test page params : { params.id }
+  //         </h1>
+  //     </div>
+  // )
 
-    const router = useRouter();
-    
-
-    // return (
-    //     <div>
-    //         <h1>
-    //             test page params : { params.id }
-    //         </h1>
-    //     </div>
-    // )
-    
-    
-
-
-const paramId = params.id
+  const paramId = params.id;
 
   const cardsData = require("../api/tenant.json");
 
@@ -89,33 +82,30 @@ const paramId = params.id
   }
 
   const tenantIds = Object.keys(processedData);
-//   const [currentTenantIndex, setCurrentTenantIndex] = useState({paramId}); // Initialize with the first tenant
+  //   const [currentTenantIndex, setCurrentTenantIndex] = useState({paramId}); // Initialize with the first tenant
   const [currentTenantIndex, setCurrentTenantIndex] = useState(paramId);
 
   const handlePrev = () => {
     if (paramId < Number(tenantIds.length) - 1) {
-        router.push(`/Tenant/${Number(paramId) - 1}`);
+      router.push(`/Tenant/${Number(paramId) - 1}`);
     }
-    
   };
   const handleNext = () => {
     if (paramId < Number(tenantIds.length) - 1) {
-        router.push(`/Tenant/${Number(paramId) + 1}`);
+      router.push(`/Tenant/${Number(paramId) + 1}`);
     }
-};
+  };
 
-
-
-const handleHome = () => {
-      router.push(`/Tenant/`);
-  }
+  const handleHome = () => {
+    router.push(`/Tenant/`);
+  };
 
   const getTenantName = (tenantData: any): string => {
     if (!tenantData) {
       console.error("Invalid tenant data!");
       return "Unknown Tenant";
     }
-    
+
     for (const source of orderedSources) {
       if (tenantData["Tenant Name"][source] !== "") {
         return tenantData["Tenant Name"][source];
@@ -123,7 +113,6 @@ const handleHome = () => {
     }
     return "Unknown Tenant";
   };
-  
 
   const currentTenantData = processedData[tenantIds[currentTenantIndex]];
 
@@ -154,39 +143,39 @@ const handleHome = () => {
 
   return (
     <div className="layout">
-     
-     <div className="header">
-  <div className="headerName">{getTenantName(currentTenantData)}</div>
-  <div className="headerID">Tenant ID: {tenantIds[currentTenantIndex]}</div>
-  <div className="headerButtons">
-    <Button
-      variant="contained"
-      color="primary"
-      disabled={paramId == 0}
-      onClick={handlePrev}
-    >
-      Prev
-    </Button>
-    <Button
-      variant="contained"
-      color="primary"
-      onClick={handleHome}
-    >
-      Home
-    </Button>
-    <Button
-      variant="contained"
-      color="primary"
-      disabled={paramId == tenantIds.length - 1}
-      onClick={handleNext}
-    >
-      Next
-    </Button>
-  </div>
-</div>
+      <div className="header">
+        <Button variant="contained" color="primary" onClick={handleHome}>
+          Home
+        </Button>
 
+        <div className="headerContainer">
+          <div className="headerName">{getTenantName(currentTenantData)}</div>
+          <div className="headerID">
+            Tenant ID: {tenantIds[currentTenantIndex]}
+          </div>
+        </div>
 
-      
+        <div className="headerButtons">
+          <Button
+            variant="contained"
+            color="primary"
+            disabled={paramId == 0}
+            onClick={handlePrev}
+          >
+            Prev
+          </Button>
+          
+          <Button
+            variant="contained"
+            color="primary"
+            disabled={paramId == tenantIds.length - 1}
+            onClick={handleNext}
+          >
+            Next
+          </Button>
+        </div>
+      </div>
+
       <div className="content">
         <div className="table">
           <div className="table-row header-row">
@@ -199,9 +188,7 @@ const handleHome = () => {
           </div>
           {orderedSections.map((section, sectionIndex) => (
             <div className="table-row" key={sectionIndex}>
-              <div className="table-cell stickyCell">
-                {section}
-              </div>
+              <div className="table-cell stickyCell">{section}</div>
               {orderedSources.map((source, sourceIndex) => (
                 <div className="table-cell" key={sourceIndex}>
                   <Checkbox
@@ -210,9 +197,11 @@ const handleHome = () => {
                       handleCheckboxChange(event, section, source)
                     }
                   />
-                     {currentTenantData && currentTenantData[section] && currentTenantData[section][source]
-                  ? currentTenantData[section][source]
-                  : "N/A"}
+                  {currentTenantData &&
+                  currentTenantData[section] &&
+                  currentTenantData[section][source]
+                    ? currentTenantData[section][source]
+                    : "N/A"}
                 </div>
               ))}
             </div>
@@ -221,7 +210,4 @@ const handleHome = () => {
       </div>
     </div>
   );
-  
-};
-
-
+}

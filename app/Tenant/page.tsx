@@ -52,7 +52,7 @@ export default function TenantPage() {
    
     return (
         <div className="container">
-          <h1 className="title">Tenant Page</h1>
+          <h1 className="title">All Tenants</h1>
           <input 
             className="input"
             type="text" 

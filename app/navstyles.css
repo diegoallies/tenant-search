@@ -1,0 +1,29 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #f1f1f1;
+}
+
+.navbar__left {
+  flex-grow: 1;
+}
+
+.navbar__heading {
+  font-size: 24px;
+}
+
+.navbar__right {
+  display: flex;
+  align-items: center;
+}
+
+.navbar__username {
+  margin-right: 10px;
+}
+
+.navbar__profile-icon {
+  width: 20px;
+  height: 20px;
+}
