@@ -5,6 +5,11 @@ import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faChevronLeft,
+  faChevronRight,
+} from "@fortawesome/free-solid-svg-icons";
 
 import "./styles.css";
 
@@ -96,10 +101,6 @@ export default function aboutparams({ params }: any) {
     }
   };
 
-  const handleHome = () => {
-    router.push(`/Tenant/`);
-  };
-
   const getTenantName = (tenantData: any): string => {
     if (!tenantData) {
       console.error("Invalid tenant data!");
@@ -144,10 +145,17 @@ export default function aboutparams({ params }: any) {
   return (
     <div className="layout">
       <div className="header">
-        <Button variant="contained" color="primary" onClick={handleHome}>
-          Home
+        <Button
+          variant="contained"
+          color="primary"
+          disabled={paramId === 0}
+          onClick={handlePrev}
+        >
+          <span className="buttonIcon">
+            <FontAwesomeIcon icon={faChevronLeft} />
+          </span>
+          <span className="buttonText">Prev</span>
         </Button>
-
         <div className="headerContainer">
           <div className="headerName">{getTenantName(currentTenantData)}</div>
           <div className="headerID">
@@ -155,25 +163,17 @@ export default function aboutparams({ params }: any) {
           </div>
         </div>
 
-        <div className="headerButtons">
-          <Button
-            variant="contained"
-            color="primary"
-            disabled={paramId == 0}
-            onClick={handlePrev}
-          >
-            Prev
-          </Button>
-          
-          <Button
-            variant="contained"
-            color="primary"
-            disabled={paramId == tenantIds.length - 1}
-            onClick={handleNext}
-          >
-            Next
-          </Button>
-        </div>
+        <Button
+          variant="contained"
+          color="primary"
+          disabled={paramId === tenantIds.length - 1}
+          onClick={handleNext}
+        >
+          <span className="buttonText">Next</span>
+          <span className="buttonIcon">
+            <FontAwesomeIcon icon={faChevronRight} />
+          </span>
+        </Button>
       </div>
 
       <div className="content">
