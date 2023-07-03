@@ -99,4 +99,16 @@
     top: 0;  
     z-index: 1;
   }
+
+  .buttonIcon {
+    margin-right: 2.5px; /* Add margin to create space between the icon and text */
+    margin-left: 2.5px; /* Add margin to create space between the icon and text */
+  }
+  
+  .buttonText {
+    margin-left: 2.5px; /* Add margin to create space between the icon and text */
+    margin-right: 2.5px; /* Add margin to create space between the icon and text */
+
+  }
+  
   
