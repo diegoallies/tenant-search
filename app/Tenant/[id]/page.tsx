@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from "react";
+import Sidebar from '../sidebar';
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
@@ -163,12 +164,14 @@ export default function aboutparams({ params }: any) {
 
   return (
     <div className="layout">
+       <Sidebar />
       <div className="header">
         <Button
           variant="contained"
           color="primary"
           disabled={paramId === 0}
           onClick={handlePrev}
+          className="header-button"
         >
           <span className="buttonIcon">
             <FontAwesomeIcon icon={faChevronLeft} />
@@ -181,28 +184,27 @@ export default function aboutparams({ params }: any) {
             Tenant ID: {tenantIds[currentTenantIndex]}
           </div>
         </div>
-
         <Button
           variant="contained"
           color="primary"
           disabled={paramId === tenantIds.length - 1}
           onClick={handleNext}
+          className="header-button"
         >
           <span className="buttonText">Next</span>
           <span className="buttonIcon">
             <FontAwesomeIcon icon={faChevronRight} />
           </span>
         </Button>
-
         <Button
           variant="contained"
           color="secondary"
           onClick={handleSave}
+          className="header-button"
         >
           Save
         </Button>
       </div>
-
       <Dialog
         open={openDialog}
         onClose={handleDialogClose}
@@ -213,7 +215,7 @@ export default function aboutparams({ params }: any) {
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             {Object.entries(selectedData).map(([key, value], index) => (
-              <p key={index}>{`${key}: ${value}`}</p>
+              <p key={index} className="dialog-content-text">{`${key}: ${value}`}</p>
             ))}
           </DialogContentText>
         </DialogContent>
@@ -226,7 +228,6 @@ export default function aboutparams({ params }: any) {
           </Button>
         </DialogActions>
       </Dialog>
-
       <div className="content">
         <div className="table">
           <div className="table-row header-row">
