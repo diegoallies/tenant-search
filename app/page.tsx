@@ -23,7 +23,7 @@ interface CardProps {
 }
 
 
-const App: React.FC = () => {
+export default function Home() {
   const cardsData = require("../api/tenant.json");
 
 
