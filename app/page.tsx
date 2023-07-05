@@ -22,10 +22,8 @@ interface CardProps {
   sections: Section[];
 }
 
-
 const App: React.FC = () => {
   const cardsData = require("../api/tenant.json");
-
 
   const orderedSources = [
     "Illion",
@@ -178,4 +176,4 @@ const App: React.FC = () => {
   
 };
 
-
+export default App;
