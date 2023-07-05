@@ -4,8 +4,14 @@ import React, { useState, useEffect } from "react";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faChevronLeft,
+  faChevronRight,
+} from "@fortawesome/free-solid-svg-icons";
 
-import "./globals.css";
+import "./styles.css";
 
 interface Item {
   name: string;
@@ -22,10 +28,20 @@ interface CardProps {
   sections: Section[];
 }
 
+export default function aboutparams({ params }: any) {
+  const router = useRouter();
 
-const App: React.FC = () => {
-  const cardsData = require("../api/tenant2.json");
+  // return (
+  //     <div>
+  //         <h1>
+  //             test page params : { params.id }
+  //         </h1>
+  //     </div>
+  // )
 
+  const paramId = params.id;
+
+  const cardsData = require("../api/tenant.json");
 
   const orderedSources = [
     "Illion",
@@ -71,17 +87,26 @@ const App: React.FC = () => {
   }
 
   const tenantIds = Object.keys(processedData);
-  const [currentTenantIndex, setCurrentTenantIndex] = useState(0); // Initialize with the first tenant
+  //   const [currentTenantIndex, setCurrentTenantIndex] = useState({paramId}); // Initialize with the first tenant
+  const [currentTenantIndex, setCurrentTenantIndex] = useState(paramId);
 
   const handlePrev = () => {
-    setCurrentTenantIndex((oldIndex) => oldIndex - 1);
+    if (paramId < Number(tenantIds.length) - 1) {
+      router.push(`/Tenant/${Number(paramId) - 1}`);
+    }
   };
-
   const handleNext = () => {
-    setCurrentTenantIndex((oldIndex) => oldIndex + 1);
+    if (paramId < Number(tenantIds.length) - 1) {
+      router.push(`/Tenant/${Number(paramId) + 1}`);
+    }
   };
 
   const getTenantName = (tenantData: any): string => {
+    if (!tenantData) {
+      console.error("Invalid tenant data!");
+      return "Unknown Tenant";
+    }
+
     for (const source of orderedSources) {
       if (tenantData["Tenant Name"][source] !== "") {
         return tenantData["Tenant Name"][source];
@@ -120,29 +145,37 @@ const App: React.FC = () => {
   return (
     <div className="layout">
       <div className="header">
-        <div className="headerName">{getTenantName(currentTenantData)}</div>
-        <div className="headerID">Tenant ID: {tenantIds[currentTenantIndex]}</div>
-        <div>
-          <Button
-            variant="contained"
-            color="primary"
-            disabled={currentTenantIndex === 0}
-            onClick={handlePrev}
-          >
-            Prev
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            disabled={currentTenantIndex === tenantIds.length - 1}
-            onClick={handleNext}
-          >
-            Next
-          </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          disabled={paramId === 0}
+          onClick={handlePrev}
+        >
+          <span className="buttonIcon">
+            <FontAwesomeIcon icon={faChevronLeft} />
+          </span>
+          <span className="buttonText">Prev</span>
+        </Button>
+        <div className="headerContainer">
+          <div className="headerName">{getTenantName(currentTenantData)}</div>
+          <div className="headerID">
+            Tenant ID: {tenantIds[currentTenantIndex]}
+          </div>
         </div>
+
+        <Button
+          variant="contained"
+          color="primary"
+          disabled={paramId === tenantIds.length - 1}
+          onClick={handleNext}
+        >
+          <span className="buttonText">Next</span>
+          <span className="buttonIcon">
+            <FontAwesomeIcon icon={faChevronRight} />
+          </span>
+        </Button>
       </div>
 
-      
       <div className="content">
         <div className="table">
           <div className="table-row header-row">
@@ -155,9 +188,7 @@ const App: React.FC = () => {
           </div>
           {orderedSections.map((section, sectionIndex) => (
             <div className="table-row" key={sectionIndex}>
-              <div className="table-cell stickyCell">
-                {section}
-              </div>
+              <div className="table-cell stickyCell">{section}</div>
               {orderedSources.map((source, sourceIndex) => (
                 <div className="table-cell" key={sourceIndex}>
                   <Checkbox
@@ -166,7 +197,11 @@ const App: React.FC = () => {
                       handleCheckboxChange(event, section, source)
                     }
                   />
-                  {currentTenantData[section][source]}
+                  {currentTenantData &&
+                  currentTenantData[section] &&
+                  currentTenantData[section][source]
+                    ? currentTenantData[section][source]
+                    : "N/A"}
                 </div>
               ))}
             </div>
@@ -175,7 +210,4 @@ const App: React.FC = () => {
       </div>
     </div>
   );
-  
-};
-
-
+}

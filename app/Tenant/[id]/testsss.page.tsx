@@ -5,7 +5,7 @@ import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
 
-import "./globals.css";
+import "./styles.css";
 
 interface Item {
   name: string;
@@ -22,10 +22,8 @@ interface CardProps {
   sections: Section[];
 }
 
-
 const App: React.FC = () => {
-  const cardsData = require("../api/tenant2.json");
-
+  const cardsData = require("./api/tenant.json");
 
   const orderedSources = [
     "Illion",
@@ -178,4 +176,4 @@ const App: React.FC = () => {
   
 };
 
-
+export default App;
