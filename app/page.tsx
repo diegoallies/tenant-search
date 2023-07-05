@@ -24,7 +24,7 @@ interface CardProps {
 
 
 const App: React.FC = () => {
-  const cardsData = require("../api/tenant2.json");
+  const cardsData = require("../api/tenant.json");
 
 
   const orderedSources = [
