@@ -1,15 +1,21 @@
-"use client";
+'use client'
 
 import React, { useState, useEffect } from "react";
+import Sidebar from '../sidebar';
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { useRouter } from "next/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChevronLeft,
   faChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogActions from "@mui/material/DialogActions";
 
 import "./styles.css";
 
@@ -29,18 +35,9 @@ interface CardProps {
 }
 
 export default function aboutparams({ params }: any) {
-  const router = useRouter();
-
-  // return (
-  //     <div>
-  //         <h1>
-  //             test page params : { params.id }
-  //         </h1>
-  //     </div>
-  // )
+  // const router = useRouter();
 
   const paramId = params.id;
-
   const cardsData = require("../api/tenant.json");
 
   const orderedSources = [
@@ -76,7 +73,6 @@ export default function aboutparams({ params }: any) {
   > = {};
   for (const id in cardsData) {
     const itemData = cardsData[id];
-
     processedData[id] = {};
     for (const section of orderedSections) {
       processedData[id][section] = {};
@@ -87,14 +83,16 @@ export default function aboutparams({ params }: any) {
   }
 
   const tenantIds = Object.keys(processedData);
-  //   const [currentTenantIndex, setCurrentTenantIndex] = useState({paramId}); // Initialize with the first tenant
   const [currentTenantIndex, setCurrentTenantIndex] = useState(paramId);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedData, setSelectedData] = useState({});
 
   const handlePrev = () => {
     if (paramId < Number(tenantIds.length) - 1) {
       router.push(`/Tenant/${Number(paramId) - 1}`);
     }
   };
+
   const handleNext = () => {
     if (paramId < Number(tenantIds.length) - 1) {
       router.push(`/Tenant/${Number(paramId) + 1}`);
@@ -136,20 +134,44 @@ export default function aboutparams({ params }: any) {
   }, [currentTenantIndex]);
 
   const handleCheckboxChange = (event, section, source) => {
-    setChecked((prevChecked) => ({
-      ...prevChecked,
-      [`${section}-${source}`]: event.target.checked,
-    }));
+    setChecked((prevChecked) => {
+      const newChecked = {
+        ...prevChecked,
+        [`${section}-${source}`]: event.target.checked,
+      };
+
+      setSelectedData((prevSelectedData) => {
+        const newSelectedData = { ...prevSelectedData };
+        if (event.target.checked) {
+          newSelectedData[`${section}-${source}`] = currentTenantData[section][source];
+        } else {
+          delete newSelectedData[`${section}-${source}`];
+        }
+        return newSelectedData;
+      });
+
+      return newChecked;
+    });
+  };
+
+  const handleSave = () => {
+    setOpenDialog(true);
+  };
+
+  const handleDialogClose = () => {
+    setOpenDialog(false);
   };
 
   return (
     <div className="layout">
+       <Sidebar />
       <div className="header">
         <Button
           variant="contained"
           color="primary"
           disabled={paramId === 0}
           onClick={handlePrev}
+          className="header-button"
         >
           <span className="buttonIcon">
             <FontAwesomeIcon icon={faChevronLeft} />
@@ -162,20 +184,50 @@ export default function aboutparams({ params }: any) {
             Tenant ID: {tenantIds[currentTenantIndex]}
           </div>
         </div>
-
         <Button
           variant="contained"
           color="primary"
           disabled={paramId === tenantIds.length - 1}
           onClick={handleNext}
+          className="header-button"
         >
           <span className="buttonText">Next</span>
           <span className="buttonIcon">
             <FontAwesomeIcon icon={faChevronRight} />
           </span>
         </Button>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={handleSave}
+          className="header-button"
+        >
+          Save
+        </Button>
       </div>
-
+      <Dialog
+        open={openDialog}
+        onClose={handleDialogClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Confirm your selection"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            {Object.entries(selectedData).map(([key, value], index) => (
+              <p key={index} className="dialog-content-text">{`${key}: ${value}`}</p>
+            ))}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleDialogClose} color="primary" autoFocus>
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
       <div className="content">
         <div className="table">
           <div className="table-row header-row">
