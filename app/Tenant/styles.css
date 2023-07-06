@@ -20,6 +20,7 @@
   outline: none;
   width: 50%;
   box-sizing: border-box;
+  height: 4px !important; /* changed from 1vh to 40px */
 }
 
 .grid-container {

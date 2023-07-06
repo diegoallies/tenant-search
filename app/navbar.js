@@ -9,7 +9,7 @@ const Navbar = ({ username }) => {
       <div className="navbar__left">
         <h1>
           <Link legacyBehavior href={`/Tenant/`}>
-            <a className="navbar__heading">Arealytics</a>
+            <a className="navbar__heading">Arealytics Tenant Division</a>
           </Link>
         </h1>
       </div>

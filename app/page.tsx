@@ -1,179 +1,96 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import Grid from "@mui/material/Grid";
-import Button from "@mui/material/Button";
-import Checkbox from "@mui/material/Checkbox";
+import { useState } from "react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import "./main.globals.css";
+import { FaUserAlt, FaKey } from "react-icons/fa";
 
-import "./globals.css";
+export default function LoginPage() {
+  const router = useRouter();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
 
-interface Item {
-  name: string;
-  source: string;
-}
-
-interface Section {
-  title: string;
-  items: Item[];
-}
-
-interface CardProps {
-  header: string;
-  sections: Section[];
-}
-
-export default function () {
-  const cardsData = require("../api/tenant.json");
-
-  const orderedSources = [
-    "Illion",
-    "Source1",
-    "Source2",
-    "Source3",
-    "Google",
-    "ZoomInfo",
-  ];
-  const orderedSections = [
-    "Tenant Name",
-    "Alternate Tenant Name",
-    "Floor / Level Number",
-    "Suite Number",
-    "Street Address",
-    "City",
-    "State",
-    "Postal Code",
-    "Metro Area",
-    "Country",
-    "Website URL",
-    "Email Address",
-    "Phone Number",
-    "ABN",
-    "ACN",
-    "SIC Code",
+  // Mock user credentials
+  const users = [
+    {
+      username: "user1",
+      password: "password1",
+    },
+    {
+      username: "user2",
+      password: "password2",
+    },
   ];
 
-  const processedData: Record<
-    string,
-    Record<string, Record<string, string | number>>
-  > = {};
-  for (const id in cardsData) {
-    const itemData = cardsData[id];
+  const handleUsernameChange = (e) => {
+    setUsername(e.target.value);
+  };
 
-    processedData[id] = {};
-    for (const section of orderedSections) {
-      processedData[id][section] = {};
-      for (const source of orderedSources) {
-        processedData[id][section][source] = itemData[section][source] || "";
-      }
+  const handlePasswordChange = (e) => {
+    setPassword(e.target.value);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+  
+    // User validation
+    const validUser = users.find(
+      (user) => user.username === username && user.password === password
+    );
+  
+    if (validUser) {
+      setError(null);
+     
+      router.push("/Tenant"); // Replace with your Tenant page path
+
+    } else {
+      setError("Invalid username or password");
     }
-  }
-
-  const tenantIds = Object.keys(processedData);
-  const [currentTenantIndex, setCurrentTenantIndex] = useState(0); // Initialize with the first tenant
-
-  const handlePrev = () => {
-    setCurrentTenantIndex((oldIndex) => oldIndex - 1);
   };
+  
 
-  const handleNext = () => {
-    setCurrentTenantIndex((oldIndex) => oldIndex + 1);
-  };
-
-  const getTenantName = (tenantData: any): string => {
-    for (const source of orderedSources) {
-      if (tenantData["Tenant Name"][source] !== "") {
-        return tenantData["Tenant Name"][source];
-      }
-    }
-    return "Unknown Tenant";
-  };
-
-  const currentTenantData = processedData[tenantIds[currentTenantIndex]];
-
-  const [checked, setChecked] = useState(() => {
-    const initialChecked = {};
-    orderedSections.forEach((section) => {
-      orderedSources.forEach((source) => {
-        initialChecked[`${section}-${source}`] = false;
-      });
-    });
-    return initialChecked;
-  });
-
-  useEffect(() => {
-    const newChecked = { ...checked };
-    Object.keys(newChecked).forEach((key) => {
-      newChecked[key] = false;
-    });
-    setChecked(newChecked);
-  }, [currentTenantIndex]);
-
-  const handleCheckboxChange = (event, section, source) => {
-    setChecked((prevChecked) => ({
-      ...prevChecked,
-      [`${section}-${source}`]: event.target.checked,
-    }));
-  };
 
   return (
-    <div className="layout">
-      <div className="header">
-        <div className="headerName">{getTenantName(currentTenantData)}</div>
-        <div className="headerID">Tenant ID: {tenantIds[currentTenantIndex]}</div>
-        <div>
-          <Button
-            variant="contained"
-            color="primary"
-            disabled={currentTenantIndex === 0}
-            onClick={handlePrev}
-          >
-            Prev
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            disabled={currentTenantIndex === tenantIds.length - 1}
-            onClick={handleNext}
-          >
-            Next
-          </Button>
-        </div>
+    <div className="maindiv">
+      <div className="bg-container">
+        <div className="bg-text"><h3>Arealytics</h3> <h6>Advanced Real Estate Analytics</h6> </div>
       </div>
-
-      
-      <div className="content">
-        <div className="table">
-          <div className="table-row header-row">
-            <div className="table-cell"></div>
-            {orderedSources.map((source, index) => (
-              <div className="table-cell" key={index}>
-                {source}
-              </div>
-            ))}
-          </div>
-          {orderedSections.map((section, sectionIndex) => (
-            <div className="table-row" key={sectionIndex}>
-              <div className="table-cell stickyCell">
-                {section}
-              </div>
-              {orderedSources.map((source, sourceIndex) => (
-                <div className="table-cell" key={sourceIndex}>
-                  <Checkbox
-                    checked={checked[`${section}-${source}`]}
-                    onChange={(event) =>
-                      handleCheckboxChange(event, section, source)
-                    }
-                  />
-                  {currentTenantData[section][source]}
-                </div>
-              ))}
+      <div className="login-container">
+        <div className="login-box">
+          <h1 className="title">Login</h1>
+          {error && <div className="error-message">{error}</div>}
+          <form onSubmit={handleSubmit}>
+            <div className="input-group">
+              <FaUserAlt className="input-icon" />
+              <input 
+                type="text"
+                placeholder="Username"
+                value={username}
+                onChange={handleUsernameChange} 
+                className="input"
+              />
             </div>
-          ))}
+
+            <div className="input-group">
+              <FaKey className="input-icon" />
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={handlePasswordChange}
+                className="input"
+              />
+            </div>
+
+            <input
+              type="submit"
+              value="Submit"
+              className="login-btn"
+            />
+          </form>
         </div>
       </div>
     </div>
   );
-  
-};
-
-
+}
