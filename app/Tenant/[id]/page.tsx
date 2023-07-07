@@ -5,7 +5,7 @@ import Sidebar from '../sidebar';
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
-import { useRouter } from "next/router";
+import { useRouter } from 'next/navigation';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChevronLeft,
@@ -15,6 +15,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
+import mockRouter from 'next-router-mock';
 import DialogActions from "@mui/material/DialogActions";
 
 import "./styles.css";
@@ -35,7 +36,7 @@ interface CardProps {
 }
 
 export default function aboutparams({ params }: any) {
-  // const router = useRouter();
+  const router = useRouter();
 
   const paramId = params.id;
   const cardsData = require("../api/tenant.json");
@@ -162,6 +163,25 @@ export default function aboutparams({ params }: any) {
     setOpenDialog(false);
   };
 
+  const handleConfirm = () => {
+    const selectedCount = Object.keys(selectedData).length;
+
+    // Always use a fixed key, e.g., 'tenantData'
+    let tenantData = JSON.parse(localStorage.getItem('tenantData') || '{}');
+
+    // Get the tenant ID from the tenantIds array
+    let tenantId = tenantIds[paramId];
+    
+    // Store selectedCount as the value for each tenantId
+    tenantData[tenantId] = selectedCount;
+    
+    localStorage.setItem('tenantData', JSON.stringify(tenantData));
+
+    setOpenDialog(false);
+};
+
+
+
   return (
     <div className="layout">
        <Sidebar />
@@ -223,7 +243,7 @@ export default function aboutparams({ params }: any) {
           <Button onClick={handleDialogClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleDialogClose} color="primary" autoFocus>
+          <Button onClick={handleConfirm} color="primary" autoFocus>
             Confirm
           </Button>
         </DialogActions>

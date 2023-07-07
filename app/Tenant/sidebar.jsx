@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Drawer, Button } from '@mui/material';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -9,8 +9,8 @@ import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 
-const Sidebar = () => {
-  const [isOpen, setIsOpen] = useState(false);
+const Sidebar = ({ handleFilter }) => {
+  const [isOpen, setIsOpen] = React.useState(false);
 
   const toggleDrawer = () => {
     setIsOpen(!isOpen);
@@ -22,7 +22,7 @@ const Sidebar = () => {
       <Drawer open={isOpen} onClose={toggleDrawer}>
         <List>
           {['To Do', 'In Progress', 'Completed'].map((text, index) => (
-            <ListItem button key={text}>
+            <ListItem button key={text} onClick={() => handleFilter(text)}>
               <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
               <ListItemText primary={text} />
             </ListItem>
