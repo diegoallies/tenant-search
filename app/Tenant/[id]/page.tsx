@@ -1,11 +1,9 @@
 'use client'
-
 import React, { useState, useEffect } from "react";
-import Sidebar from '../sidebar';
-import Grid from "@mui/material/Grid";
+import Sidebar from "../sidebar";
 import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChevronLeft,
@@ -15,7 +13,6 @@ import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
-import mockRouter from 'next-router-mock';
 import DialogActions from "@mui/material/DialogActions";
 
 import "./styles.css";
@@ -35,7 +32,7 @@ interface CardProps {
   sections: Section[];
 }
 
-export default function aboutparams({ params }: any) {
+export default function Tenant({ params }: any) {
   const router = useRouter();
 
   const paramId = params.id;
@@ -84,19 +81,22 @@ export default function aboutparams({ params }: any) {
   }
 
   const tenantIds = Object.keys(processedData);
-  const [currentTenantIndex, setCurrentTenantIndex] = useState(paramId);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedData, setSelectedData] = useState({});
 
   const handlePrev = () => {
-    if (paramId < Number(tenantIds.length) - 1) {
-      router.push(`/Tenant/${Number(paramId) - 1}`);
+    const prevIdIndex = tenantIds.indexOf(paramId) - 1;
+    if (prevIdIndex >= 0) {
+      const prevId = tenantIds[prevIdIndex];
+      router.push(`/Tenant/${prevId}`);
     }
   };
 
   const handleNext = () => {
-    if (paramId < Number(tenantIds.length) - 1) {
-      router.push(`/Tenant/${Number(paramId) + 1}`);
+    const nextIdIndex = tenantIds.indexOf(paramId) + 1;
+    if (nextIdIndex < tenantIds.length) {
+      const nextId = tenantIds[nextIdIndex];
+      router.push(`/Tenant/${nextId}`);
     }
   };
 
@@ -114,7 +114,7 @@ export default function aboutparams({ params }: any) {
     return "Unknown Tenant";
   };
 
-  const currentTenantData = processedData[tenantIds[currentTenantIndex]];
+  const currentTenantData = processedData[paramId];
 
   const [checked, setChecked] = useState(() => {
     const initialChecked = {};
@@ -132,7 +132,7 @@ export default function aboutparams({ params }: any) {
       newChecked[key] = false;
     });
     setChecked(newChecked);
-  }, [currentTenantIndex]);
+  }, [paramId]);
 
   const handleCheckboxChange = (event, section, source) => {
     setChecked((prevChecked) => {
@@ -144,7 +144,8 @@ export default function aboutparams({ params }: any) {
       setSelectedData((prevSelectedData) => {
         const newSelectedData = { ...prevSelectedData };
         if (event.target.checked) {
-          newSelectedData[`${section}-${source}`] = currentTenantData[section][source];
+          newSelectedData[`${section}-${source}`] =
+            currentTenantData[section][source];
         } else {
           delete newSelectedData[`${section}-${source}`];
         }
@@ -166,30 +167,22 @@ export default function aboutparams({ params }: any) {
   const handleConfirm = () => {
     const selectedCount = Object.keys(selectedData).length;
 
-    // Always use a fixed key, e.g., 'tenantData'
-    let tenantData = JSON.parse(localStorage.getItem('tenantData') || '{}');
+    let tenantData = JSON.parse(localStorage.getItem("tenantData") || "{}");
+    tenantData[paramId] = selectedCount;
 
-    // Get the tenant ID from the tenantIds array
-    let tenantId = tenantIds[paramId];
-    
-    // Store selectedCount as the value for each tenantId
-    tenantData[tenantId] = selectedCount;
-    
-    localStorage.setItem('tenantData', JSON.stringify(tenantData));
+    localStorage.setItem("tenantData", JSON.stringify(tenantData));
 
     setOpenDialog(false);
-};
-
-
+  };
 
   return (
     <div className="layout">
-       <Sidebar />
+      <Sidebar onFilter={(filter) => console.log(filter)} />
       <div className="header">
         <Button
           variant="contained"
           color="primary"
-          disabled={paramId === 0}
+          disabled={tenantIds.indexOf(paramId) === 0}
           onClick={handlePrev}
           className="header-button"
         >
@@ -200,14 +193,12 @@ export default function aboutparams({ params }: any) {
         </Button>
         <div className="headerContainer">
           <div className="headerName">{getTenantName(currentTenantData)}</div>
-          <div className="headerID">
-            Tenant ID: {tenantIds[currentTenantIndex]}
-          </div>
+          <div className="headerID">Tenant ID: {paramId}</div>
         </div>
         <Button
           variant="contained"
           color="primary"
-          disabled={paramId === tenantIds.length - 1}
+          disabled={tenantIds.indexOf(paramId) === tenantIds.length - 1}
           onClick={handleNext}
           className="header-button"
         >
