@@ -1,6 +1,6 @@
-'use client'
+"use client";
+
 import React, { useState, useEffect } from "react";
-import Sidebar from "../sidebar";
 import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
@@ -36,15 +36,15 @@ export default function Tenant({ params }: any) {
   const router = useRouter();
 
   const paramId = params.id;
-  const cardsData = require("../api/tenant.json");
+  const cardsData = require("../api/new-tenant111.json");
 
   const orderedSources = [
     "Illion",
-    "Source1",
-    "Source2",
-    "Source3",
     "Google",
     "ZoomInfo",
+    "WebScraping",
+    "ABNLookup",
+    "notes",
   ];
   const orderedSections = [
     "Tenant Name",
@@ -64,21 +64,28 @@ export default function Tenant({ params }: any) {
     "ACN",
     "SIC Code",
   ];
-
   const processedData: Record<
     string,
     Record<string, Record<string, string | number>>
   > = {};
+
   for (const id in cardsData) {
     const itemData = cardsData[id];
     processedData[id] = {};
     for (const section of orderedSections) {
       processedData[id][section] = {};
       for (const source of orderedSources) {
-        processedData[id][section][source] = itemData[section][source] || "";
+        processedData[id][section][source] =
+          itemData.fields[section] &&
+          itemData.fields[section][source] &&
+          itemData.fields[section][source].length > 0
+            ? itemData.fields[section][source]
+            : [""];
       }
     }
   }
+
+  
 
   const tenantIds = Object.keys(processedData);
   const [openDialog, setOpenDialog] = useState(false);
@@ -100,6 +107,40 @@ export default function Tenant({ params }: any) {
     }
   };
 
+  const handleCheckboxChange = (event, section, source, idx) => {
+    const key = `${section}-${source}-${idx}`;
+    setChecked((prevChecked) => {
+      const newChecked = {
+        ...prevChecked,
+        [key]: event.target.checked,
+      };
+      setSelectedData((prevSelectedData) => {
+        const newSelectedData = { ...prevSelectedData };
+        if (event.target.checked) {
+          newSelectedData[key] = currentTenantData[section][source][idx];
+        } else {
+          delete newSelectedData[key];
+        }
+        return newSelectedData;
+      });
+      return newChecked;
+    });
+  };
+
+  const [checked, setChecked] = useState(() => {
+    const initialChecked = {};
+    orderedSections.forEach((section) => {
+      orderedSources.forEach((source) => {
+        processedData[paramId][section][source].forEach((item, idx) => {
+          initialChecked[`${section}-${source}-${idx}`] = false;
+        });
+      });
+    });
+    return initialChecked;
+  });
+
+  const currentTenantData = processedData[paramId];
+
   const getTenantName = (tenantData: any): string => {
     if (!tenantData) {
       console.error("Invalid tenant data!");
@@ -107,24 +148,15 @@ export default function Tenant({ params }: any) {
     }
 
     for (const source of orderedSources) {
-      if (tenantData["Tenant Name"][source] !== "") {
+      if (
+        tenantData["Tenant Name"] &&
+        tenantData["Tenant Name"][source] !== ""
+      ) {
         return tenantData["Tenant Name"][source];
       }
     }
     return "Unknown Tenant";
   };
-
-  const currentTenantData = processedData[paramId];
-
-  const [checked, setChecked] = useState(() => {
-    const initialChecked = {};
-    orderedSections.forEach((section) => {
-      orderedSources.forEach((source) => {
-        initialChecked[`${section}-${source}`] = false;
-      });
-    });
-    return initialChecked;
-  });
 
   useEffect(() => {
     const newChecked = { ...checked };
@@ -133,28 +165,6 @@ export default function Tenant({ params }: any) {
     });
     setChecked(newChecked);
   }, [paramId]);
-
-  const handleCheckboxChange = (event, section, source) => {
-    setChecked((prevChecked) => {
-      const newChecked = {
-        ...prevChecked,
-        [`${section}-${source}`]: event.target.checked,
-      };
-
-      setSelectedData((prevSelectedData) => {
-        const newSelectedData = { ...prevSelectedData };
-        if (event.target.checked) {
-          newSelectedData[`${section}-${source}`] =
-            currentTenantData[section][source];
-        } else {
-          delete newSelectedData[`${section}-${source}`];
-        }
-        return newSelectedData;
-      });
-
-      return newChecked;
-    });
-  };
 
   const handleSave = () => {
     setOpenDialog(true);
@@ -165,19 +175,13 @@ export default function Tenant({ params }: any) {
   };
 
   const handleConfirm = () => {
-    const selectedCount = Object.keys(selectedData).length;
-
     let tenantData = JSON.parse(localStorage.getItem("tenantData") || "{}");
-    tenantData[paramId] = selectedCount;
-
+    tenantData[paramId] = selectedData;
     localStorage.setItem("tenantData", JSON.stringify(tenantData));
-
     setOpenDialog(false);
   };
-
   return (
     <div className="layout">
-      <Sidebar onFilter={(filter) => console.log(filter)} />
       <div className="header">
         <Button
           variant="contained"
@@ -222,11 +226,16 @@ export default function Tenant({ params }: any) {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">{"Confirm your selection"}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">
+          {"Confirm your selection"}
+        </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             {Object.entries(selectedData).map(([key, value], index) => (
-              <p key={index} className="dialog-content-text">{`${key}: ${value}`}</p>
+              <p
+                key={index}
+                className="dialog-content-text"
+              >{`${key}: ${value}`}</p>
             ))}
           </DialogContentText>
         </DialogContent>
@@ -240,37 +249,39 @@ export default function Tenant({ params }: any) {
         </DialogActions>
       </Dialog>
       <div className="content">
-        <div className="table">
-          <div className="table-row header-row">
-            <div className="table-cell"></div>
-            {orderedSources.map((source, index) => (
-              <div className="table-cell" key={index}>
-                {source}
-              </div>
-            ))}
-          </div>
-          {orderedSections.map((section, sectionIndex) => (
-            <div className="table-row" key={sectionIndex}>
-              <div className="table-cell stickyCell">{section}</div>
-              {orderedSources.map((source, sourceIndex) => (
-                <div className="table-cell" key={sourceIndex}>
+  <div className="table">
+    <div className="table-row header-row">
+      <div className="table-cell"></div>
+      {Object.keys(currentTenantData[orderedSections[0]]).map((key, index) => (
+        <div className="table-cell" key={index}>
+          {key}
+        </div>
+      ))}
+    </div>
+    {orderedSections.map((section, sectionIndex) => (
+      <div className="table-row" key={sectionIndex}>
+        <div className="table-cell stickyCell">{section}</div>
+        {Object.keys(currentTenantData[section]).map((source, sourceIndex) => (
+          <div className="table-cell" key={sourceIndex}>
+            {currentTenantData[section][source] &&
+              currentTenantData[section][source].map((item, idx) => (
+                <div key={idx}>
                   <Checkbox
-                    checked={checked[`${section}-${source}`]}
+                    checked={checked[`${section}-${source}-${idx}`]}
                     onChange={(event) =>
-                      handleCheckboxChange(event, section, source)
+                      handleCheckboxChange(event, section, source, idx)
                     }
                   />
-                  {currentTenantData &&
-                  currentTenantData[section] &&
-                  currentTenantData[section][source]
-                    ? currentTenantData[section][source]
-                    : "N/A"}
+                  {item ? item : "N/A"}
                 </div>
               ))}
-            </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
+    ))}
+  </div>
+</div>
+
     </div>
   );
 }

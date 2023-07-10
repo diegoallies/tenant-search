@@ -2,7 +2,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
+  padding: 16px;
+  font-size: 0.8em; /* Reduced font size */
   font-family: Arial, sans-serif;
 }
 
@@ -44,6 +45,10 @@
   font-weight: bold;
 }
 
+.headerContainer {
+  width: 1550px;
+}
+
 .headerID {
   font-size: 0.3em;
   margin-bottom: 8px;
@@ -53,7 +58,7 @@
   position: relative;
   overflow: auto;  
   height: calc(100vh - 25vh);
-  width: 97.5%;
+  width: 100%;
   padding: 15px; 
   margin-top: 20px;
 }
@@ -61,7 +66,7 @@
 .table {
   display: flex;
   flex-direction: column;
-  width: 100%;
+  width: 100%; 
   border-collapse: collapse;
 }
 
@@ -71,17 +76,19 @@
 
 .table-cell {
   border: 1px solid #ccc;
-  padding: 15px;
+  padding: 8px;
   background-color: #fff;
-  border-radius: 5px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  margin: 2px;
-  margin-bottom: 6px;
-  flex-basis: 15%;
+  border-radius: 4px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  margin: 1px;
+  margin-bottom: 3px;
+  flex-basis: 10%;
   flex-grow: 1;
-  flex-shrink: 0;
+  flex-shrink: 5;
   overflow-wrap: break-word;
 }
+
+
 
 .header-row .table-cell {
   position: sticky;
@@ -90,6 +97,7 @@
   color: whitesmoke;
   font-weight: bold;
   z-index: 5;
+  height: 40px;
 }
 
 .stickyCell {
@@ -118,6 +126,6 @@
 }
 
 .dialog-content-text {
-  font-size: 0.6em;
-  margin: 5px 0;
+  font-size: 0.15em; /* Reduced font size */
+  margin: 2px 0; /* Reduced margin */
 }
