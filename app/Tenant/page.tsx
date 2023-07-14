@@ -51,22 +51,21 @@ export default function TenantPage() {
         tenantId.toLowerCase().includes(searchTerm.toLowerCase())
       );
     });
-
-    // Filtering logic based on the filter state
+  
     if (filter === "In Progress") {
-      results = results.filter(
-        (tenantId) =>
-          localStorage.getItem("tenantData") &&
-          JSON.parse(localStorage.getItem("tenantData"))[tenantId] < 5
-      );
+      results = results.filter((tenantId) => {
+        const data = JSON.parse(localStorage.getItem("tenantData") || "{}");
+        const selectedData = data[tenantId];
+        return selectedData && Object.keys(selectedData).length < orderedSources.length;
+      });
     } else if (filter === "Completed") {
-      results = results.filter(
-        (tenantId) =>
-          localStorage.getItem("tenantData") &&
-          JSON.parse(localStorage.getItem("tenantData"))[tenantId] >= 5
-      );
+      results = results.filter((tenantId) => {
+        const data = JSON.parse(localStorage.getItem("tenantData") || "{}");
+        const selectedData = data[tenantId];
+        return selectedData && Object.keys(selectedData).length === 5;
+      });
     }
-
+  
     setSearchResults(results);
   }, [searchTerm, tenantData, filter]);
 
