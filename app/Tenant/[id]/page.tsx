@@ -85,8 +85,6 @@ export default function Tenant({ params }: any) {
     }
   }
 
-  
-
   const tenantIds = Object.keys(processedData);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedData, setSelectedData] = useState({});
@@ -231,11 +229,10 @@ export default function Tenant({ params }: any) {
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            {Object.entries(selectedData).map(([key, value], index) => (
-              <p
-                key={index}
-                className="dialog-content-text"
-              >{`${key}: ${value}`}</p>
+            {Object.entries(selectedData).map(([key, value]) => (
+              <div key={key}>
+                <strong>{key}:</strong> {value}
+              </div>
             ))}
           </DialogContentText>
         </DialogContent>
@@ -249,39 +246,42 @@ export default function Tenant({ params }: any) {
         </DialogActions>
       </Dialog>
       <div className="content">
-  <div className="table">
-    <div className="table-row header-row">
-      <div className="table-cell"></div>
-      {Object.keys(currentTenantData[orderedSections[0]]).map((key, index) => (
-        <div className="table-cell" key={index}>
-          {key}
-        </div>
-      ))}
-    </div>
-    {orderedSections.map((section, sectionIndex) => (
-      <div className="table-row" key={sectionIndex}>
-        <div className="table-cell stickyCell">{section}</div>
-        {Object.keys(currentTenantData[section]).map((source, sourceIndex) => (
-          <div className="table-cell" key={sourceIndex}>
-            {currentTenantData[section][source] &&
-              currentTenantData[section][source].map((item, idx) => (
-                <div key={idx}>
-                  <Checkbox
-                    checked={checked[`${section}-${source}-${idx}`]}
-                    onChange={(event) =>
-                      handleCheckboxChange(event, section, source, idx)
-                    }
-                  />
-                  {item ? item : "N/A"}
+        <div className="table">
+          <div className="table-row header-row">
+            <div className="table-cell"></div>
+            {Object.keys(currentTenantData[orderedSections[0]]).map(
+              (key, index) => (
+                <div className="table-cell" key={index}>
+                  {key}
                 </div>
-              ))}
+              )
+            )}
           </div>
-        ))}
+          {orderedSections.map((section, sectionIndex) => (
+            <div className="table-row" key={sectionIndex}>
+              <div className="table-cell stickyCell">{section}</div>
+              {Object.keys(currentTenantData[section]).map(
+                (source, sourceIndex) => (
+                  <div className="table-cell" key={sourceIndex}>
+                    {currentTenantData[section][source] &&
+                      currentTenantData[section][source].map((item, idx) => (
+                        <div key={idx}>
+                          <Checkbox
+                            checked={checked[`${section}-${source}-${idx}`]}
+                            onChange={(event) =>
+                              handleCheckboxChange(event, section, source, idx)
+                            }
+                          />
+                          {item ? item : "N/A"}
+                        </div>
+                      ))}
+                  </div>
+                )
+              )}
+            </div>
+          ))}
+        </div>
       </div>
-    ))}
-  </div>
-</div>
-
     </div>
   );
 }
