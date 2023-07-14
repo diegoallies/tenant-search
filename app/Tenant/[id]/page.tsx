@@ -105,7 +105,7 @@ export default function Tenant({ params }: any) {
     }
   };
 
-  const handleCheckboxChange = (event, section, source, idx) => {
+  const handleCheckboxChange = (event, section, source, idx, value = "") => {
     const key = `${section}-${source}-${idx}`;
     setChecked((prevChecked) => {
       const newChecked = {
@@ -115,7 +115,8 @@ export default function Tenant({ params }: any) {
       setSelectedData((prevSelectedData) => {
         const newSelectedData = { ...prevSelectedData };
         if (event.target.checked) {
-          newSelectedData[key] = currentTenantData[section][source][idx];
+          newSelectedData[key] =
+            value || currentTenantData[section][source][idx];
         } else {
           delete newSelectedData[key];
         }
@@ -228,10 +229,13 @@ export default function Tenant({ params }: any) {
           {"Confirm your selection"}
         </DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">
+          <DialogContentText
+            id="alert-dialog-description"
+            className="dialog-content"
+          >
             {Object.entries(selectedData).map(([key, value]) => (
               <div key={key}>
-                <strong>{key}:</strong> {value}
+                <strong>{key}:</strong> --- {value} ---
               </div>
             ))}
           </DialogContentText>
@@ -269,10 +273,37 @@ export default function Tenant({ params }: any) {
                           <Checkbox
                             checked={checked[`${section}-${source}-${idx}`]}
                             onChange={(event) =>
-                              handleCheckboxChange(event, section, source, idx)
+                              handleCheckboxChange(
+                                event,
+                                section,
+                                source,
+                                idx,
+                                source === "notes"
+                                  ? document.getElementById(
+                                      `${section}-${source}-${idx}`
+                                    ).value
+                                  : undefined
+                              )
                             }
                           />
-                          {item ? item : "N/A"}
+                          {source === "notes" ? (
+                            <textarea
+                              id={`${section}-${source}-${idx}`}
+                              defaultValue={item ? item : ""}
+                              onBlur={(event) =>
+                                checked[`${section}-${source}-${idx}`] &&
+                                handleCheckboxChange(
+                                  event,
+                                  section,
+                                  source,
+                                  idx,
+                                  event.target.value
+                                )
+                              }
+                            />
+                          ) : (
+                            item || "N/A"
+                          )}
                         </div>
                       ))}
                   </div>
