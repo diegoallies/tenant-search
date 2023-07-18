@@ -1,0 +1,34 @@
+{
+    "users": [
+      {
+        "name": "John Doe",
+        "email": "john.doe@example.com",
+        "username": "john",
+        "password": "password1"
+      },
+      {
+        "name": "Jane Smith",
+        "email": "jane.smith@example.com",
+        "username": "janesmith",
+        "password": "password2"
+      },
+      {
+        "name": "Robert Johnson",
+        "email": "robert.johnson@example.com",
+        "username": "robertj",
+        "password": "password3"
+      },
+      {
+        "name": "Mary Johnson",
+        "email": "mary.johnson@example.com",
+        "username": "maryj",
+        "password": "password4"
+      },
+      {
+        "name": "James Wilson",
+        "email": "james.wilson@example.com",
+        "username": "jamesw",
+        "password": "password5"
+      }
+    ]
+  }

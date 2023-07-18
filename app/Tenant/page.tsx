@@ -84,7 +84,11 @@ export default function TenantPage() {
               <p className="card-id">ID: {tenantId}</p>
             </div>
             <div>
-              <Link legacyBehavior href={`/Tenant/${tenantId}`}>
+              <Link
+                legacyBehavior
+                prefetch={false}
+                href={`/Tenant/${tenantId}`}
+              >
                 <a className="card-link">Details</a>
               </Link>
             </div>
@@ -92,10 +96,20 @@ export default function TenantPage() {
         ))}
       </div>
       <div className="pagination">
-        {currentPage > 1 && <button onClick={handlePrevious}>Previous</button>}
-        {filteredTenants.length > currentPage * TENANTS_PER_PAGE && (
-          <button onClick={handleNext}>Next</button>
-        )}
+        <button
+          className="pagination-btn"
+          onClick={handlePrevious}
+          disabled={currentPage <= 1}
+        >
+          Previous
+        </button>
+        <button
+          className="pagination-btn"
+          onClick={handleNext}
+          disabled={filteredTenants.length <= currentPage * TENANTS_PER_PAGE}
+        >
+          Next
+        </button>
       </div>
     </div>
   );

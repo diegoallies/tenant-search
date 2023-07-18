@@ -8,6 +8,17 @@
 
 .navbar__left {
   flex-grow: 1;
+  max-width: 5%;
+}
+
+.navbar__right {
+  display: flex;
+  align-items: center;
+}
+
+.navbar__center {
+  display: flex;
+  align-items: center;
 }
 
 .navbar__heading {
@@ -24,12 +35,6 @@
   text-decoration: none; /* Remove any underline or decoration on hover, active, and focus states */
 }
 
-
-.navbar__right {
-  display: flex;
-  align-items: center;
-}
-
 .navbar__username {
   margin-right: 10px;
 }
@@ -37,4 +42,64 @@
 .navbar__profile-icon {
   width: 20px;
   height: 20px;
+}
+
+.menu {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  padding: 0;
+}
+.menu svg {
+  pointer-events: none;
+}
+
+.menu.opened svg .line1 {
+  stroke-dasharray: 90 207;
+  stroke-dashoffset: -134;
+}
+
+.menu.opened svg .line2 {
+  stroke-dasharray: 1 60;
+  stroke-dashoffset: -30;
+}
+
+.menu.opened svg .line3 {
+  stroke-dasharray: 90 207;
+  stroke-dashoffset: -134;
+}
+.line {
+  fill: none;
+  stroke: black;
+  stroke-width: 6;
+  transition: stroke-dasharray 600ms cubic-bezier(0.4, 0, 0.2, 1),
+    stroke-dashoffset 600ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.line1 {
+  stroke-dasharray: 60 207;
+  stroke-width: 6;
+}
+.line2 {
+  stroke-dasharray: 60 60;
+  stroke-width: 6;
+}
+.line3 {
+  stroke-dasharray: 60 207;
+  stroke-width: 6;
+}
+.opened .line1 {
+  stroke-dasharray: 90 207;
+  stroke-dashoffset: -134;
+  stroke-width: 6;
+}
+.opened .line2 {
+  stroke-dasharray: 1 60;
+  stroke-dashoffset: -30;
+  stroke-width: 6;
+}
+.opened .line3 {
+  stroke-dasharray: 90 207;
+  stroke-dashoffset: -134;
+  stroke-width: 6;
 }
