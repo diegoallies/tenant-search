@@ -11,6 +11,19 @@
   max-width: 5%;
 }
 
+.svg-shifted {
+  transform: translateX(280px); /* Adjust this based on the width of your sidebar */
+  transition: transform 0.3s ease-out;
+  z-index: 1;
+  position: relative;
+  background-color: rgba(0, 0, 0, 0);
+}
+
+.svg-shifted-back {
+  transform: translateX(235px);
+  transition: transform 0.3s ease-in;
+}
+
 .navbar__right {
   display: flex;
   align-items: center;

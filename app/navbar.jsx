@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import Sidebar from "./Tenant/sidebar";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
-import "./navstyles.css"; // Assuming all given css is put inside `navstyles.css`
+import "./navstyles.css";
+import { useState } from "react";
 
 const Navbar = ({ username }) => {
   const [isOpened, setIsOpened] = useState(false);
@@ -22,7 +23,12 @@ const Navbar = ({ username }) => {
           aria-label="Main Menu"
           aria-expanded={isOpened}
         >
-          <svg width="50" height="50" viewBox="0 0 100 100">
+          <svg
+            width="50"
+            height="50"
+            viewBox="0 0 100 100"
+            className={isOpened ? "svg-shifted" : "svg-shifted-back"}
+          >
             <path
               className="line line1"
               d="M 20,29.000046 H 80.000231 C 80.000231,29.000046 94.498839,28.817352 94.532987,66.711331 94.543142,77.980673 90.966081,81.670246 85.259173,81.668997 79.552261,81.667751 75.000211,74.999942 75.000211,74.999942 L 25.000021,25.000058"
@@ -34,8 +40,8 @@ const Navbar = ({ username }) => {
             />
           </svg>
         </button>
+        <Sidebar isOpen={isOpened} toggleSidebar={toggleMenu} />
       </div>
-
       <div className="navbar__center">
         <h1>
           <Link legacyBehavior href={`/Tenant/`}>
@@ -51,5 +57,4 @@ const Navbar = ({ username }) => {
     </nav>
   );
 };
-
 export default Navbar;
