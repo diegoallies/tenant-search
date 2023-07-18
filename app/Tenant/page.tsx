@@ -1,26 +1,22 @@
 "use client";
-
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import "./styles.css";
-import Sidebar from "./sidebar"; // adjust the path based on your project structure
+import Sidebar from "./sidebar";
+import debounce from "lodash.debounce";
 
-const orderedSources = [
+const ORDERED_SOURCES = [
   "Illion",
   "Google",
   "ZoomInfo",
   "WebScraping",
   "ABNLookup",
 ];
-const getTenantName = (tenantData) => {
-  if (!tenantData || !tenantData.fields || !tenantData.fields["Tenant Name"]) {
-    console.error("Invalid tenant data!");
-    return "Name Unknown";
-  }
+const TENANTS_PER_PAGE = 21;
 
-  const tenantFields = tenantData.fields["Tenant Name"];
-
-  for (const source of orderedSources) {
+function getTenantName(tenantData) {
+  const tenantFields = tenantData?.fields?.["Tenant Name"];
+  for (const source of ORDERED_SOURCES) {
     if (
       tenantFields[source] &&
       tenantFields[source].length > 0 &&
@@ -30,66 +26,56 @@ const getTenantName = (tenantData) => {
     }
   }
   return "No Name Available";
-};
+}
 
 export default function TenantPage() {
   const [tenantData, setTenantData] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
-  const [filter, setFilter] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const handleChange = (nextValue) => {
+    setSearchTerm(nextValue);
+    setCurrentPage(1);
+  };
+  const debouncedSave = useCallback(
+    debounce((nextValue) => handleChange(nextValue), 1000),
+    []
+  );
+  const handleNext = useCallback(() => setCurrentPage((prev) => prev + 1), []);
+  const handlePrevious = useCallback(
+    () => setCurrentPage((prev) => (prev > 1 ? prev - 1 : 1)),
+    []
+  );
 
   useEffect(() => {
     const cardsData = require("./api/new-tenant111.json");
     setTenantData(cardsData);
   }, []);
 
-  useEffect(() => {
-    let results = Object.keys(tenantData).filter((tenantId) => {
-      const tenantName = getTenantName(tenantData[tenantId]);
-      return (
-        tenantName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        tenantId.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    });
-  
-    if (filter === "In Progress") {
-      results = results.filter((tenantId) => {
-        const data = JSON.parse(localStorage.getItem("tenantData") || "{}");
-        const selectedData = data[tenantId];
-        return selectedData && Object.keys(selectedData).length < orderedSources.length;
-      });
-    } else if (filter === "Completed") {
-      results = results.filter((tenantId) => {
-        const data = JSON.parse(localStorage.getItem("tenantData") || "{}");
-        const selectedData = data[tenantId];
-        return selectedData && Object.keys(selectedData).length === 5;
-      });
-    }
-  
-    setSearchResults(results);
-  }, [searchTerm, tenantData, filter]);
-
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-  };
-
-  const handleFilter = (filter) => {
-    setFilter(filter);
-  };
+  const filteredTenants = Object.keys(tenantData).filter((tenantId) => {
+    const tenantName = getTenantName(tenantData[tenantId]);
+    return (
+      tenantName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      tenantId.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
+  const tenantsToShow = filteredTenants.slice(
+    (currentPage - 1) * TENANTS_PER_PAGE,
+    currentPage * TENANTS_PER_PAGE
+  );
 
   return (
     <div className="container">
-      <Sidebar handleFilter={handleFilter} />
+      <Sidebar />
       <h1 className="title">All Tenants</h1>
       <input
         className="input"
         type="text"
         placeholder="Search Tenants"
-        value={searchTerm}
-        onChange={handleSearchChange}
+        onChange={(e) => debouncedSave(e.target.value)}
       />
       <div className="grid-container">
-        {searchResults.map((tenantId, index) => (
+        {tenantsToShow.map((tenantId, index) => (
           <div key={index} className="card">
             <div>
               <h2 className="card-title">
@@ -104,6 +90,12 @@ export default function TenantPage() {
             </div>
           </div>
         ))}
+      </div>
+      <div className="pagination">
+        {currentPage > 1 && <button onClick={handlePrevious}>Previous</button>}
+        {filteredTenants.length > currentPage * TENANTS_PER_PAGE && (
+          <button onClick={handleNext}>Next</button>
+        )}
       </div>
     </div>
   );
