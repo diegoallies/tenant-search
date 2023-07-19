@@ -1,5 +1,6 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import "./styles.css";
 import Sidebar from "./sidebar";
@@ -28,19 +29,43 @@ function getTenantName(tenantData) {
   return "No Name Available";
 }
 
+function useLocalStorage(key, defaultValue) {
+  const [state, setState] = useState(() => {
+    try {
+      const value = window.localStorage.getItem(key);
+      return value ? value : defaultValue;
+    } catch (e) {
+      console.log(e);
+      return defaultValue;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(key, state);
+    } catch (e) {
+      console.log(e);
+    }
+  }, [state, key]);
+
+  return [state, setState];
+}
+
 export default function TenantPage() {
   const [tenantData, setTenantData] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedOption, setSelectedOption] = useLocalStorage(
+    "userFilter",
+    "All"
+  );
 
   const handleChange = (nextValue) => {
     setSearchTerm(nextValue);
     setCurrentPage(1);
   };
-  const debouncedSave = useCallback(
-    debounce((nextValue) => handleChange(nextValue), 1000),
-    []
-  );
+  const debouncedSave = useCallback(debounce(handleChange, 1000), []);
+
   const handleNext = useCallback(() => setCurrentPage((prev) => prev + 1), []);
   const handlePrevious = useCallback(
     () => setCurrentPage((prev) => (prev > 1 ? prev - 1 : 1)),
@@ -52,13 +77,30 @@ export default function TenantPage() {
     setTenantData(cardsData);
   }, []);
 
-  const filteredTenants = Object.keys(tenantData).filter((tenantId) => {
-    const tenantName = getTenantName(tenantData[tenantId]);
-    return (
-      tenantName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      tenantId.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  });
+  const filteredTenants = useMemo(() => {
+    return Object.keys(tenantData)
+      .filter((key) => {
+        if (selectedOption === "To Do") {
+          console.log("to do");
+          return true;
+        } else if (selectedOption === "In Progress") {
+          // Filter logic for In Progress
+          console.log("to prog");
+        } else if (selectedOption === "Completed") {
+          // Filter logic for Completed
+        } else {
+          return true; // If selectedOption is "All"
+        }
+      })
+      .filter((tenantId) => {
+        const tenantName = getTenantName(tenantData[tenantId]);
+        return (
+          tenantName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          tenantId.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+      });
+  }, [tenantData, searchTerm, selectedOption]);
+
   const tenantsToShow = filteredTenants.slice(
     (currentPage - 1) * TENANTS_PER_PAGE,
     currentPage * TENANTS_PER_PAGE
@@ -77,21 +119,16 @@ export default function TenantPage() {
       <div className="grid-container">
         {tenantsToShow.map((tenantId, index) => (
           <div key={index} className="card">
-            <div>
+            <div className="cardTitleBlock">
               <h2 className="card-title">
                 {getTenantName(tenantData[tenantId])}
               </h2>
-              <p className="card-id">ID: {tenantId}</p>
             </div>
-            <div>
-              <Link
-                legacyBehavior
-                prefetch={false}
-                href={`/Tenant/${tenantId}`}
-              >
-                <a className="card-link">Details</a>
-              </Link>
-            </div>
+
+            <p className="card-id">ID: {tenantId}</p>
+            <Link legacyBehavior href={`/Tenant/${tenantId}`}>
+              <a className="card-link">Details</a>
+            </Link>
           </div>
         ))}
       </div>

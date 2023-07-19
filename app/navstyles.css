@@ -20,7 +20,7 @@
 }
 
 .svg-shifted-back {
-  transform: translateX(235px);
+  transform: translateX(0);
   transition: transform 0.3s ease-in;
 }
 

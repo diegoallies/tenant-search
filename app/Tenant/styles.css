@@ -53,6 +53,11 @@
   margin-bottom: 0.5em;
 }
 
+.cardTitleBlock {
+  max-height: 80px;
+  height: 40px;
+}
+
 .card-details {
   font-size: 1em;
 }
