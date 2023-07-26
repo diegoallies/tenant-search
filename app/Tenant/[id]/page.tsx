@@ -173,12 +173,39 @@ export default function Tenant({ params }: any) {
     setOpenDialog(false);
   };
 
-  const handleConfirm = () => {
-    let tenantData = JSON.parse(localStorage.getItem("tenantData") || "{}");
-    tenantData[paramId] = selectedData;
-    localStorage.setItem("tenantData", JSON.stringify(tenantData));
-    setOpenDialog(false);
+  const handleConfirm = async () => {
+    // fetch the API
+    const response = await fetch("http://localhost:3000/api/storeData", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: paramId,
+        selectedData: selectedData,
+      }),
+    });
+
+    // Log response to see the actual return from server
+    console.log(response);
+
+    if (response.ok) {
+      const data = await response.json();
+
+      // Handle the data or perform any necessary actions
+      console.log(data);
+      setOpenDialog(false);
+    } else {
+      // Handle error response
+      console.error("Error:", response.statusText);
+    }
   };
+  // const handleConfirm = () => {
+  //   let tenantData = JSON.parse(localStorage.getItem("tenantData") || "{}");
+  //   tenantData[paramId] = selectedData;
+  //   localStorage.setItem("tenantData", JSON.stringify(tenantData));
+  //   setOpenDialog(false);
+  // };
   return (
     <div className="layout">
       <div className="header">
