@@ -29,26 +29,56 @@ function getTenantName(tenantData) {
   return "No Name Available";
 }
 
+// function useLocalStorage(key, defaultValue) {
+//   const [state, setState] = useState(() => {
+//     try {
+//       const value = window.localStorage.getItem(key);
+//       return value ? value : defaultValue;
+//     } catch (e) {
+//       console.log(e);
+//       return defaultValue;
+//     }
+//   });
+
+//   useEffect(() => {
+//     try {
+//       window.localStorage.setItem(key, state);
+//     } catch (e) {
+//       console.log(e);
+//     }
+//   }, [state, key]);
+
+//   return [state, setState];
+// }
+
 function useLocalStorage(key, defaultValue) {
-  const [state, setState] = useState(() => {
-    try {
-      const value = window.localStorage.getItem(key);
-      return value ? value : defaultValue;
-    } catch (e) {
-      console.log(e);
-      return defaultValue;
-    }
-  });
+  let parsedValue = defaultValue;
+  try {
+    if (typeof window !== "undefined" && window.localStorage.getItem(key))
+      parsedValue = JSON.parse(window.localStorage.getItem(key));
+  } catch (e) {
+    console.log('useLocalStorage err:', e);
+  }
 
-  useEffect(() => {
-    try {
-      window.localStorage.setItem(key, state);
-    } catch (e) {
-      console.log(e);
-    }
-  }, [state, key]);
+  const [state, setState] = useState(parsedValue);
 
-  return [state, setState];
+  // The use of 'useEffect' is causing the loop so we will
+  // use 'useCallback' which won't trigger on every rerender
+  const safelySetState = useCallback(
+    (newValue) => {
+      try {
+        const valueToStore =
+          newValue instanceof Function ? newValue(state) : newValue;
+        setState(valueToStore);
+        window.localStorage.setItem(key, JSON.stringify(valueToStore));
+      } catch (e) {
+        console.error(`Error setting state with key "${key}" to localStorage.`);
+      }
+    },
+    [key]
+  );
+
+  return [state, safelySetState];
 }
 
 export default function TenantPage() {
