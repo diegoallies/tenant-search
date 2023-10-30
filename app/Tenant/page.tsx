@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import "./styles.css";
+import styles from './page.module.css';
 import Sidebar from "./sidebar";
 import debounce from "lodash.debounce";
 
@@ -13,7 +13,7 @@ const ORDERED_SOURCES = [
   "WebScraping",
   "ABNLookup",
 ];
-const TENANTS_PER_PAGE = 21;
+const TENANTS_PER_PAGE = 20;
 
 function getTenantName(tenantData) {
   const tenantFields = tenantData?.fields?.["Tenant Name"];
@@ -28,28 +28,6 @@ function getTenantName(tenantData) {
   }
   return "No Name Available";
 }
-
-// function useLocalStorage(key, defaultValue) {
-//   const [state, setState] = useState(() => {
-//     try {
-//       const value = window.localStorage.getItem(key);
-//       return value ? value : defaultValue;
-//     } catch (e) {
-//       console.log(e);
-//       return defaultValue;
-//     }
-//   });
-
-//   useEffect(() => {
-//     try {
-//       window.localStorage.setItem(key, state);
-//     } catch (e) {
-//       console.log(e);
-//     }
-//   }, [state, key]);
-
-//   return [state, setState];
-// }
 
 function useLocalStorage(key, defaultValue) {
   let parsedValue = defaultValue;
@@ -136,47 +114,46 @@ export default function TenantPage() {
     currentPage * TENANTS_PER_PAGE
   );
 
-  return (
-    <div className="container">
-      <Sidebar />
-      <h1 className="title">All Tenants</h1>
-      <input
-        className="input"
-        type="text"
-        placeholder="Search Tenants"
-        onChange={(e) => debouncedSave(e.target.value)}
-      />
-      <div className="grid-container">
-        {tenantsToShow.map((tenantId, index) => (
-          <div key={index} className="card">
-            <div className="cardTitleBlock">
-              <h2 className="card-title">
-                {getTenantName(tenantData[tenantId])}
-              </h2>
-            </div>
 
-            <p className="card-id">ID: {tenantId}</p>
-            <Link legacyBehavior href={`/Tenant/${tenantId}`}>
-              <a className="card-link">Details</a>
-            </Link>
-          </div>
-        ))}
-      </div>
-      <div className="pagination">
+  return (
+    <div className={styles.container}>
+      <h1 className={styles.title}>All Tenants</h1>
+      {/* Other elements... */}
+      <div className={styles.pagination}>
         <button
-          className="pagination-btn"
+          className={styles['pagination-btn']}
           onClick={handlePrevious}
           disabled={currentPage <= 1}
         >
           Previous
         </button>
+  
+        <input
+          className={styles.input}
+          type="text"
+          placeholder="Search Tenants"
+          onChange={(e) => debouncedSave(e.target.value)}
+        /> 
+  
         <button
-          className="pagination-btn"
+          className={styles['pagination-btn']}
           onClick={handleNext}
           disabled={filteredTenants.length <= currentPage * TENANTS_PER_PAGE}
         >
           Next
         </button>
+      </div>
+  
+      <div className={styles['table-layout']}>
+        {tenantsToShow.map((tenantId, index) => (
+          <div key={index} className={styles['table-row']}>
+            <p className={styles['table-cell']}>{getTenantName(tenantData[tenantId])}</p>
+            <p className={styles['table-cell']}>ID: {tenantId}</p>
+            <Link legacyBehavior href={`/Tenant/${tenantId}`}>
+              <a className={styles['table-cell']}>Details</a>
+            </Link>
+          </div>
+        ))}
       </div>
     </div>
   );
